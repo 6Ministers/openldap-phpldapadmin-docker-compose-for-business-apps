@@ -48,7 +48,6 @@ To change the domain in the `Caddyfile` to your own
 
 ``` bash
 https://subdomain.your-domain:443 {
-    header Strict-Transport-Security max-age=31536000;
     reverse_proxy :8080
  #   tls admin@example.org
 	encode zstd gzip
