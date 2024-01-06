@@ -1,0 +1,60 @@
+version: "3.5"
+
+services:
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    container_name: caddy
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./certs:/certs
+      - ./config:/config
+      - ./data:/data
+      - ./sites:/srv
+    network_mode: "host"
+
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    ports:
+      - "389:389"
+      - "636:636"
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "DomainCompany"
+      LDAP_DOMAIN: "domain.com"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "adminpw"
+      LDAP_CONFIG_PASSWORD: "adminpw"
+      LDAP_READONLY_USER: "false"
+      LDAP_READONLY_USER_USERNAME: "readonly"
+      LDAP_READONLY_USER_PASSWORD: "readonly"
+      LDAP_RFC2307BIS_SCHEMA: "false"
+      LDAP_BACKEND: "mdb"
+      LDAP_REPLICATION: "false"
+      KEEP_EXISTING_CONFIG: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./storage/ldap_db:/var/lib/ldap
+      - ./storage/ldap_config:/etc/ldap/slapd.d
+    domainname: "domain.com" # important: same as hostname
+    hostname: "domain.com"
+    networks:
+      - openldap
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    ports:
+      - "8080:80"
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    depends_on:
+      - openldap
+
+networks:
+  openldap:
+    name: openldap
