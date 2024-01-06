@@ -47,7 +47,7 @@ cd ldap
 To change the domain in the `Caddyfile` to your own
 
 ``` bash
-https://subdomain.your-domain:443 {
+https://ldap.your-domain:443 {
     reverse_proxy :8080
  #   tls admin@example.org
 	encode zstd gzip
@@ -56,13 +56,37 @@ https://subdomain.your-domain:443 {
 }
 ```
 
+Change the data in docker-compose.yml
+
+Password
+
+``` bash
+LDAP_ADMIN_PASSWORD: "adminldap"
+```
+
+Specify your domain name
+
+``` bash
+domainname: "domain.com" # important: same as hostname
+hostname: "domain.com"
+```
+
+
 ## 5.Run OpenLDAP+PhpLdapAdmin:
 
 ``` bash
 docker-compose up -d
 ```
 
-Then open `https://penpot.domain.com:` to access OpenLDAP+PhpLdapAdmin
+Then open `https://ldap.domain.com:` to access OpenLDAP+PhpLdapAdmin
+
+
+Access data
+
+``` bash
+Login: cn=admin,dc=domain,dc=com
+Password: adminldap # If you haven't changed it
+```
 
 
 ## OpenLDAP+PhpLdapAdmin container management

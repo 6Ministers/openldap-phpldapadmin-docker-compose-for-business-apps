@@ -41,8 +41,7 @@ services:
       - ./storage/ldap_config:/etc/ldap/slapd.d
     domainname: "domain.com" # important: same as hostname
     hostname: "domain.com"
-    networks:
-      - openldap
+
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest
@@ -52,9 +51,3 @@ services:
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
       PHPLDAPADMIN_HTTPS: "false"
-    depends_on:
-      - openldap
-
-networks:
-  openldap:
-    name: openldap
